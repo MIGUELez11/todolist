@@ -26,7 +26,7 @@ export class Login extends Component {
                 sha.reset();
                 fetch(`http://${url}:8081/login`, { credentials: "include", method: "PUT", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user: this.state.email, password }) }).then(r =>
                     console.log(r));
-                fetch(`http://${url}:8081/verify`, { credentials: "include" }).then(r => r.json()).then(console.log);
+                fetch(`http://${url}:8081/verify`, { credentials: "include" }).then(r => r.json()).then(console.log).catch(console.error);
             }
         })
         // let ws = new WebSocket(`ws://${url}:8080`);
