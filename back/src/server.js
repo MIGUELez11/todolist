@@ -1,20 +1,24 @@
+require("dotenv").config();
+const base64 = require('base-64');
+const crypto = require("crypto");
 const WebSocket = require("ws");
 const express = require("express")();
 const randexp = require("randexp");
 const bodyParser = require("body-parser");
 const cors = require("cors")
 const mysql = require("mysql");
+const cookieParser = require("cookie-parser");
 const port = 8080;
 const server = new WebSocket.Server({ port });
 const clients = {};
 const regex = "[0123456789abcdef]{8}-([0123456789abcdef]{4}-){3}[0123456789abcdef]{8}";
 const generator = new randexp(regex);
 const sqlConnection = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "root",
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASS,
     multipleStatements: true
-})
+});
 sqlConnection.connect(err => {
     if (err)
         throw err;
@@ -33,19 +37,53 @@ sqlConnection.connect(err => {
 });
 express.use(bodyParser.urlencoded());
 express.use(bodyParser.json());
-express.use(cors());
+express.use(cookieParser());
+express.use(cors({
+    credentials: true,
+    origin: ["http://localhost:3000", "http://127.0.0.1:3000"]
+}));
 
 function generateUUID() {
     return generator.gen();
 }
 
+function generateJWT(payload) {
+    let base64_header = base64.encode(JSON.stringify({ "alg": "HS256", "typ": "JWT" })).replace("=", "").replace("+", "-");
+    let base64_payload = base64.encode(JSON.stringify(payload)).replace("=", "").replace("+", "-");
+    let secret = process.env.PRIVATE_KEY;
+    let signed = crypto.createHmac("sha256", secret).update(`${base64_header}.${base64_payload}`).digest("base64").replace("=", "").replace("+", "-");
+    return (`${base64_header}.${base64_payload}.${signed}`);
+}
+
+function verifyJWT(jwt) {
+    let parts = jwt.split(".");
+    let secret = process.env.PRIVATE_KEY;
+    if (crypto.createHmac("sha256", `${secret}`).update(`${parts[0]}.${parts[1]}`).digest("base64").replace("=", "").replace("+", "-") == parts[2])
+        console.log("good");
+    else
+        console.log("bad");
+    let header = base64.decode(parts[0]);
+    let payload = base64.decode(parts[1]);
+    console.log(JSON.parse(header), JSON.parse(payload));
+}
+
+express.get("/verify", (req, res) => {
+    console.log(req.cookies);
+    if (req.cookies && req.cookies.jwt && verifyJWT(req.cookies.jwt))
+        res.status(204).end();
+    else
+        res.status(400).end();
+})
+
 express.put("/login", (req, res) => {
     if (req.body.user && req.body.password)
-        sqlConnection.query(`SELECT password from todolist.H_Users WHERE email="${req.body.user}";`, (e, result) => {
+        sqlConnection.query(`SELECT name, password, UUID from todolist.H_Users WHERE email="${req.body.user}";`, (e, result) => {
             if (e)
                 res.send(JSON.stringify({ msg: "user not found", code: 0 }));
-            else if (result[0].password == req.body.password)
+            else if (result[0].password == req.body.password) {
+                res.cookie("jwt", generateJWT({ "name": result[0].name, "UUID": result[0].UUID, "email": req.body.user }), { secure: false, httpOnly: true })
                 res.send(JSON.stringify({ msg: "welcome", code: 1 }))
+            }
             else
                 res.send(JSON.stringify({ msg: "incorret password", code: 0 }));
         })

@@ -19,13 +19,14 @@ export class Login extends Component {
         //Getting salt for giving password
         e.preventDefault();
         let url = document.location.href.split("://")[1].split(":")[0];
-        fetch(`http://${url}:8081/login/salt`, { method: "PUT", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user: this.state.email }) }).then(r => r.json()).then(data => {
+        fetch(`http://${url}:8081/login/salt`, { credentials: "include", method: "PUT", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user: this.state.email }) }).then(r => r.json()).then(data => {
             if (data.msg && data.msg.salt) {
                 let sha = new sha3(512);
                 let password = sha.update(data.msg.salt + this.state.password + data.msg.salt).digest("hex");
                 sha.reset();
-                fetch(`http://${url}:8081/login`, { method: "PUT", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user: this.state.email, password }) }).then(r =>
+                fetch(`http://${url}:8081/login`, { credentials: "include", method: "PUT", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user: this.state.email, password }) }).then(r =>
                     console.log(r));
+                fetch(`http://${url}:8081/verify`, { credentials: "include" }).then(r => r.json()).then(console.log);
             }
         })
         // let ws = new WebSocket(`ws://${url}:8080`);
