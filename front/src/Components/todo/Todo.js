@@ -12,8 +12,19 @@ export class Todo extends Component {
         this.sendMessage = this.sendMessage.bind(this);
     }
 
+	//Input value handler
+	handleValue(e) {
+        this.setState({ ...this.state, value: e.target.value });
+	}
+	//Handle if item is selected and send to websocket and its self
+	handleCheckbox(message, connection) {
+        message = { ...message };
+        message.finished = !message.finished;
+        connection.addItem(message, 5);
+    }
+	//WebSocket listener for update items
     receiveMessage(message) {
-        let messages = [...this.state.messages];;
+        let messages = [...this.state.messages];
         if (message.code === 1 || message.code === 2)
             messages = [...this.state.messages, message];
         else if (message.code === 5 || message.code === 6) {
@@ -29,18 +40,9 @@ export class Todo extends Component {
         }
         this.setState({ ...this.state, messages: messages, value: "" });
     }
-    handleValue(e) {
-        this.setState({ ...this.state, value: e.target.value });
-    }
-    handleCheckbox(message, connection) {
-        message = { ...message };
-        message.finished = !message.finished;
-        connection.addItem(message, 5);
-        // let messages = this.state.messages;
-        // messages[id].finished = !messages[id].finished;
-        // this.setState({ ...this.state, messages });
-    }
-
+    
+    
+	// Send a message to websocket and its self
     sendMessage(connection) {
         if (this.state.value)
             connection.addItem({ "sender": connection.connection.UUID, "code": "1", "message": this.state.value });

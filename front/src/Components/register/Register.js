@@ -11,19 +11,30 @@ export class Register extends Component {
             "password": ""
         }
         this.handleChange = this.handleChange.bind(this);
-    }
+	}
+	//Input value handler
     handleChange(e, key) {
         this.setState({ ...this.state, [(key)]: e.target.value });
-    }
+	}
+	
+	//Send a registration petition to server
     register(e, session) {
-        e.preventDefault();
-        let sha = new sha3(512);
-        let salt = session.generateUUID();
-        let password = sha.update(salt + this.state.password + salt).digest("hex");
-        console.log(password.length)
-        sha.reset();
-        let url = document.location.href.split("://")[1].split(":")[0];
-        fetch(`http://${url}:8081/register`, { method: "PUT", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ UUID: session.generateUUID(), name: this.state.userName, email: this.state.email, password, salt }) }).then(d => d.json()).then(d => console.log(d));
+		e.preventDefault();
+		if (this.state.email && this.state.password && this.state.userName)
+		{
+
+			let sha = new sha3(512);
+			let salt = session.generateUUID();
+			let password = sha.update(salt + this.state.password + salt).digest("hex");
+			console.log(password.length)
+			sha.reset();
+			let url = document.location.href.split("://")[1].split(":")[0];
+			fetch(`http://${url}:8081/register`, { method: "PUT", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ UUID: session.generateUUID(), name: this.state.userName, email: this.state.email, password, salt }) }).then(d => d.json()).then(d => {
+				//TODO
+				//Handle server response
+				console.log(d)
+			});
+		}
     }
     render() {
         return (
