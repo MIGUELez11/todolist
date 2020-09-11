@@ -1,0 +1,24 @@
+.viewer {
+    display: flex;
+    flex-wrap: wrap;
+    width: 50%;
+    min-width: 300px;
+    margin: 10px auto;
+    .item {
+        border-radius: 10px;
+        width: calc(30% - 40px);
+        padding: 10px;
+        margin: 5px  10px;
+        border: 1px solid black;
+        cursor: pointer;
+        p {
+            text-align: center;
+        }
+        &.checked {
+            opacity: 0.5;
+            p {
+                text-decoration: line-through;
+            }
+        }
+    }
+}
