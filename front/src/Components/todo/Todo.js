@@ -55,7 +55,7 @@ export class Todo extends Component {
                     {connection => {
                         return (
                             <>
-                                <button onClick={connection.closeConnection} >Log out</button>
+                                <button onClick={() => {localStorage.setItem("logout", true); connection.closeConnection()}} >Log out</button>
                                 <input value={this.state.value} onChange={this.handleValue.bind(this)} />
                                 <button onClick={() => this.sendMessage(connection)}>Send</button>
                                 <div className={styles.viewer}>

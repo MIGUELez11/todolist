@@ -26,9 +26,11 @@ export class Login extends Component {
                 let sha = new sha3(512);
                 let password = sha.update(data.msg.salt + this.state.password + data.msg.salt).digest("hex");
                 sha.reset();
-                fetch(`http://${url}:8081/login`, { credentials: "include", method: "PUT", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user: this.state.email, password }) }).then(r =>
-                    console.log(r));
-                fetch(`http://${url}:8081/verify`, { credentials: "include" }).then(r => r.json()).then(console.log).catch(console.error);
+                fetch(`http://${url}:8081/login`, { credentials: "include", method: "PUT", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ user: this.state.email, password }) }).then(r => r.json()).then(data => {
+					console.log(data.msg.UUID);	
+				if (data.msg.UUID)
+					document.location = `http://${url}:3000/`;
+				})
             }
         })
         

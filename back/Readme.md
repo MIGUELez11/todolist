@@ -24,3 +24,13 @@
  - **4**: Client response to server
  - **5**: Update from client
  - **6**: Update broadcasted by server
+
+
+# How to generate certificates #
+
+```bash
+mkdir certs;
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=SP/ST=Spain/L=Madrid/O=42/CN=127.0.0.1" -keyout certs/server.key -out certs/server.crt;
+openssl rsa -in certs/server.key -text > certs/key.pem     
+openssl x509 -inform PEM -in certs/server.crt > certs/cert.pem
+```
