@@ -34,3 +34,21 @@ openssl req -x509 -nodes -days 365 -newkey rsa:2048 -subj "/C=SP/ST=Spain/L=Madr
 openssl rsa -in certs/server.key -text > certs/key.pem     
 openssl x509 -inform PEM -in certs/server.crt > certs/cert.pem
 ```
+
+# Create a .env #
+
+The .env must have at least:
+
+```.env
+PRIVATE_KEY=
+DB_HOST=
+DB_USER=
+DB_PASS=
+```
+
+Put the values that match your database and a private_key.
+
+You can generate a private_key with:
+```js
+console.log(require("crypto").randomBytes(64).toString("hex"));
+```
