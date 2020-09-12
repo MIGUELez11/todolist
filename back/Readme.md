@@ -48,73 +48,73 @@ console.log(require("crypto").randomBytes(64).toString("hex"));
 ### EXPRESS CODES ###
 
 
-	/jwLogin
+    /jwLogin
 
-	validJWT   -> {msg: "connection stablished", code: 200,data: payload}
-	invalidJWT -> {msg: "invalid JWT provided", code: 303} REMOVE COOKIE jwt
-	noJWT      -> {msg: "no JWT provided", code: 300}
-
-
-	/login
-
-	userNotFound		-> {msg: "user not found", code: 404}
-	loggedIn	 		-> {msg: "connection stablished", code: 200, data: payload} SET COOKIE jwt
-	incorretPassword	-> {msg: "invalid password", code: 303}
+    validJWT                -> {msg: "connection stablished", code: 200,data: payload}
+    invalidJWT              -> {msg: "invalid JWT provided", code: 303} REMOVE COOKIE jwt
+    noJWT                   -> {msg: "no JWT provided", code: 300}
 
 
-	/login/salt
+    /login
 
-	userNotFound		-> {msg: "user not found", code: 404}
-	saltGiven			-> {msg: "salt given", code: 201, data: salt}
-	NoUserProvided		-> {msg: "no user provided", code: 300}
-
-
-	/logout
-
-	loggedOut			-> {msg: "connection ended", code: 202} REMOVE COOKIE jwt
+    userNotFound		    -> {msg: "user not found", code: 404}
+    loggedIn	 		    -> {msg: "connection stablished", code: 200, data: payload} SET COOKIE jwt
+    incorretPassword	    -> {msg: "invalid password", code: 303}
 
 
-	/register
+    /login/salt
 
-	UUIDChanged				-> {msg: "user not created, UUID already registered", code: 301, UUID}
-	EmailAlreadyRegistered	-> {msg: "user not created, email already registered", code: 308}
-	UserCreated				-> {msg: "user created", code: 100}
+    userNotFound		    -> {msg: "user not found", code: 404}
+    saltGiven			    -> {msg: "salt given", code: 201, data: salt}
+    NoUserProvided		    -> {msg: "no user provided", code: 300}
+
+
+    /logout
+
+    loggedOut			    -> {msg: "connection ended", code: 202} REMOVE COOKIE jwt
+
+
+    /register
+
+    UUIDChanged				-> {msg: "user not created, UUID already registered", code: 301, UUID}
+    EmailAlreadyRegistered	-> {msg: "user not created, email already registered", code: 308}
+    UserCreated				-> {msg: "user created", code: 100}
 
 
 
 ### WEBSOCKET CODES ###
 
-	onConnection
+    onConnection
 
-	noJWT					-> {sender: "server", code: 1300, msg: "no JWT provided"}
-	inValidJWT				-> {sender: "server", code: 1303, msg: "invalid JWT provided"} REMOVE COOKIE jwt
-	connectionStablished	-> {sender: "server", code: 1200, msg: "connection stablished", payload}
-
-
-	onMessage (server)
-
-	messageReceived			-> {sender: "server", code: 1100, msg: "message received"}	//Send to sender
-	messageRebroadcasted	-> {sender: originalSender, id: originalId, code: 1101, msg: originalMessage}		//Send to everyone except sender
-	ActionRebroadcasted		-> {sender: originalSender, id: originalID, code: 1102, msg: originalMessage}		//Send to everyone except sender
+    noJWT					-> {sender: "server", code: 1300, msg: "no JWT provided"}
+    inValidJWT				-> {sender: "server", code: 1303, msg: "invalid JWT provided"} REMOVE COOKIE jwt
+    connectionStablished	-> {sender: "server", code: 1200, msg: "connection stablished", payload}
 
 
-	onMessage (client)
+    onMessage (server)
+
+    messageReceived			-> {sender: "server", code: 1100, msg: "message received"}	//Send to sender
+    messageRebroadcasted	-> {sender: originalSender, id: originalId, code: 1101, msg: originalMessage}		//Send to everyone except sender
+    ActionRebroadcasted		-> {sender: originalSender, id: originalID, code: 1102, msg: originalMessage}		//Send to everyone except sender
 
 
-	messageReceived			-> {sender: UUID, id: messageId, code: 2100, msg: "message received"}
-	newMessage				-> {sender: UUID, id: messageId, code: 2101, msg: mesage}
-	UpdateMessage			-> {sender: UUID, id: messageId, code: 2102, msg: message}
+    onMessage (client)
+
+
+    messageReceived			-> {sender: UUID, id: messageId, code: 2100, msg: "message received"}
+    newMessage				-> {sender: UUID, id: messageId, code: 2101, msg: mesage}
+    UpdateMessage			-> {sender: UUID, id: messageId, code: 2102, msg: message}
 
 
 ### DESARROLLO ###
-	AUTORIZACIÓN
-		ALLOWED		2XX
-		FORBIDDEN	3XX
-	USER MANAGEMENT
-		SUCCESS		1XX
-		FAIL		3XX
-		NOT FOUND	404
+    AUTORIZACIÓN
+        ALLOWED		2XX
+        FORBIDDEN	3XX
+    USER MANAGEMENT
+        SUCCESS		1XX
+        FAIL		3XX
+        NOT FOUND	404
 
-	WEBSOCKET
-		MESSAGE BY SERVER	1XXX
-		MESSAGE BY USER		2XXX
+    WEBSOCKET
+        MESSAGE BY SERVER	1XXX
+        MESSAGE BY USER		2XXX
