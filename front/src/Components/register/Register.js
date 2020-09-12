@@ -26,13 +26,12 @@ export class Register extends Component {
 			let sha = new sha3(512);
 			let salt = session.generateUUID();
 			let password = sha.update(salt + this.state.password + salt).digest("hex");
-			console.log(password.length)
 			sha.reset();
 			let url = document.location.href.split("://")[1].split(":")[0];
-			fetch(`http://${url}:8081/register`, { method: "PUT", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ UUID: session.generateUUID(), name: this.state.userName, email: this.state.email, password, salt }) }).then(d => d.json()).then(d => {
+			fetch(`http://${url}:8081/register`, { method: "PUT", headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ UUID: session.generateUUID(), name: this.state.userName, email: this.state.email, password, salt }) }).then(d => d.json()).then(data => {
 				//TODO
 				//Handle server response
-				console.log(d)
+				console.log(data.msg)
 			});
 		}
     }

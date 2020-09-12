@@ -39,24 +39,23 @@ class App extends React.Component {
 		}, 500);
 		
   }
-  addItem(message, code = 1) {
+  addItem(message, code = 2101) {
     let msg = JSON.stringify({ ...message, id: message.id || this.generateUUID(), code })
     this.state.connection.connection.send(msg);
     Observer.emit(JSON.parse(msg));
   }
 
   setupWSConnection(session, userData) {
-	  console.log(userData);
 	let ws = new WebSocket(`wss://${document.location.href.split("://")[1].split(":")[0]}:8080`);
 
-	ws.onclose = () => {
+	ws.onclose = (ev) => {
+		console.log("ws connection closed:", ev.reason);
 		session.closeConnection();
 	}
 
 	ws.onmessage = (message) => {
-		console.log(message);
 		let data = JSON.parse(message.data);
-		if (data.code === 0) {
+		if (data.code === 1200) {
 			session.newConnection({ connected: true, connection: ws, ...userData });
 			ws.send(JSON.stringify({ "sender": data.UUID, "message": "message received", "code": 4 }));
 		} else {
@@ -66,8 +65,10 @@ class App extends React.Component {
 }
   tryJWTLogin() {
 	  fetch(`http://${document.location.href.split("://")[1].split(":")[0]}:8081/jwtLogin`, {credentials: "include"}).then(d => d.json()).then(data => {
-		if (data.msg) {
-			this.setupWSConnection({ newConnection: this.newConnection.bind(this), connection: this.state.connection, closeConnection: this.closeConnection.bind(this), addItem: this.addItem.bind(this), generateUUID: this.generateUUID }, JSON.parse(data.msg));
+		if (data.code !== 200)
+			console.log(data.msg);
+		else {
+			this.setupWSConnection({ newConnection: this.newConnection.bind(this), connection: this.state.connection, closeConnection: this.closeConnection.bind(this), addItem: this.addItem.bind(this), generateUUID: this.generateUUID }, JSON.parse(data.data));
 			localStorage.setItem("jwtSet", true);
 		}
 	  	return data.msg;

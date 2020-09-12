@@ -24,8 +24,12 @@ server.on("connection", (client, req) => {
 	let jwt = (req.headers.cookie.split("; ").map(cookie => cookie.split("=")).filter(el => el[0] === "jwt"))[0];
 	jwt = jwt ? jwt[1] : null;
 	let payload = JWT.verifyJWT(jwt);
+	if (!jwt) {
+		client.close(1300, "no JWT provided");
+		return;
+	}
 	if (!payload)
-		client.close();
+		client.close(1303, "invalid JWT provided");
 	else {
 		payload = JSON.parse(payload);
 		if (clients[payload.UUID] === undefined) {
@@ -34,7 +38,8 @@ server.on("connection", (client, req) => {
 		clients[payload.UUID].push(client);
 
 		console.log(`${payload.UUID} (${payload.name}) joined the socket (${clients[payload.UUID].length} sessions opened)`);
-		client.send(JSON.stringify({ payload, "message": "connection stablished", "code": 0 }))
+		client.send(JSON.stringify({ payload, "msg": "connection stablished", "code": 1200 }))
+
 		client.on("close", () => {
 			clients[payload.UUID] = clients[payload.UUID].filter(session => session !== client);
 			if (clients[payload.UUID].length === 0)
@@ -43,16 +48,16 @@ server.on("connection", (client, req) => {
 		});
 
 		client.on("message", message => {
+			console.log(message)
 			let data = JSON.parse(message);
-			if (data.code !== 2 && data.code !== 3)
+			if (data.code < 2000 || data.code === 2100)
 				console.log(data);
-			if (data.code == 1) {
-				client.send(JSON.stringify({ "sender": "server", "code": 3, "message": "received" }));
-				clients[payload.UUID].forEach(wsClient => wsClient !== client ? wsClient.send(JSON.stringify({ ...data, "code": 2 })) : "");
-				// server.clients.forEach(wsClient => wsClient !== client ? wsClient.send(JSON.stringify({ ...data, "code": 2 })) : "");
-			}
-			if (data.code == 5)
-				clients[payload.UUID].forEach(wsClient => wsClient !== client ? wsClient.send(JSON.stringify({ ...data, "code": 6 })) : "");
+			if (data.code >= 2000)
+				client.send(JSON.stringify({ "sender": "server", "code": 1100, "message": "message received" }));
+			if (data.code === 2101)
+				clients[payload.UUID].forEach(wsClient => wsClient !== client ? wsClient.send(JSON.stringify({ ...data, "code": 1101 })) : "");
+			if (data.code === 2102)
+				clients[payload.UUID].forEach(wsClient => wsClient !== client ? wsClient.send(JSON.stringify({ ...data, "code": 1102 })) : "");
 		});
 	}
 

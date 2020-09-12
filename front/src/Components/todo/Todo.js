@@ -20,14 +20,14 @@ export class Todo extends Component {
 	handleCheckbox(message, connection) {
         message = { ...message };
         message.finished = !message.finished;
-        connection.addItem(message, 5);
+        connection.addItem(message, 2102);
     }
 	//WebSocket listener for update items
     receiveMessage(message) {
         let messages = [...this.state.messages];
-        if (message.code === 1 || message.code === 2)
+        if (message.code === 2101 || message.code === 1101)
             messages = [...this.state.messages, message];
-        else if (message.code === 5 || message.code === 6) {
+        else if (message.code === 2102 || message.code === 1102) {
             if (this.state.messages.filter(el => el.id === message.id).length)
                 messages = this.state.messages.map(el => {
                     if (el.id === message.id)
@@ -45,7 +45,7 @@ export class Todo extends Component {
 	// Send a message to websocket and its self
     sendMessage(connection) {
         if (this.state.value)
-            connection.addItem({ "sender": connection.connection.UUID, "code": "1", "message": this.state.value });
+            connection.addItem({ "sender": connection.connection.UUID, "code": 2101, "message": this.state.value });
     }
     render() {
         return (
