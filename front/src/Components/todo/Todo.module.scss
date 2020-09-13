@@ -12,7 +12,8 @@
         border: 1px solid black;
         cursor: pointer;
         p {
-            text-align: center;
+			text-align: center;
+			word-break: break-word;
         }
         &.checked {
             opacity: 0.5;
@@ -21,4 +22,28 @@
             }
         }
     }
+}
+
+.input {
+	border-radius: 10px;
+	outline: none;
+	border: 1.5px solid #666;
+	padding: 0 22px 0 10px;
+	height: 27px;
+	width: 207px;
+}
+
+.wrapper {
+	display: flex;
+	justify-content: center;
+}
+
+.arrow {
+	cursor: pointer;
+	transform: translateX(-20px);
+}
+
+.power {
+	margin-right: 10px;
+	cursor: pointer;
 }

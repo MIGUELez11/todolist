@@ -1,0 +1,33 @@
+.popup {
+	position: absolute;
+	z-index: 9999;
+	background-color: #fff;
+	width: 250px;
+	min-height: 100px;
+	left: 50%;
+	top: 140px;
+	transform: translateX(-50%);
+	border-radius: 5px;
+	p {
+		margin: 23px 10px 10px 10px;
+		word-break: break-word;
+	}
+	img {
+		cursor: pointer;
+		position: absolute;
+		right: 5px;
+		top: 5px;
+	}
+}
+
+.cover {
+	z-index: 9998;
+	display: block;
+	position: fixed;
+	top: 0px;
+	left: 0px;
+	width: 100%;
+	height: 100%;
+	background-color: #000;
+	opacity: 0.8;
+}

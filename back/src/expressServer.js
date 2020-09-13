@@ -12,7 +12,8 @@ server.use(bodyParser.json());
 server.use(cookieParser());
 server.use(cors({
 	credentials: true,
-	origin: ["http://localhost:3000", "http://127.0.0.1:3000"]
+	// origin: ["http://localhost:3000", "http://127.0.0.1:3000"]
+	origin: true
 }));
 
 //Login with jwt
@@ -34,7 +35,7 @@ server.put("/login", (req, res) => {
 			if (e || !result.length)
 				res.send({ msg: "user not found", code: 404 });
 			else if (result[0].password == req.body.password) {
-				let payload = { "name": result[0].name, "UUID": result[0].UUID, "email": req.body.user };
+				let payload = { "name": result[0].name, "UUID": result[0].UUID, "email": req.body.user, "ip": req.connection.remoteAddress };
 				res.cookie("jwt", JWT.generateJWT(payload), { secure: false, httpOnly: true }).send({ msg: "connection stablished", data: payload, code: 200 });
 			}
 			else

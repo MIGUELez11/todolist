@@ -3,10 +3,11 @@ import Welcome from "./Components/welcome/welcome";
 import { Todo } from "./Components/todo/Todo";
 import { SessionProvider } from "./Context/sessionContext";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import Register from "./Components/register/Register";
-import Login from "./Components/login/Login";
+// import Register from "./Components/register/Register";
+import Register from "./Components/register/register";
 import randexp from "randexp";
 import Observer from './Oberserver/observer';
+import "./App.css";
 
 class App extends React.Component {
   constructor() {
@@ -103,9 +104,6 @@ class App extends React.Component {
                 </Route>
                 <Route path="/register">
                   <Register />
-                </Route>
-                <Route path="/login">
-                  <Login />
                 </Route>
               </Switch>
             </Router>

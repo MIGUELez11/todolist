@@ -43,21 +43,23 @@ export class Todo extends Component {
     
     
 	// Send a message to websocket and its self
-    sendMessage(connection) {
-        if (this.state.value)
+    sendMessage(connection, e) {
+        if (this.state.value && (!e || e.key === "Enter"))
             connection.addItem({ "sender": connection.connection.UUID, "code": 2101, "message": this.state.value });
     }
     render() {
         return (
             <div>
-                <p>Welcome TODO</p>
+				<img className="logo" src="/logo.svg" alt="logo" />
                 <SessionConsumer>
                     {connection => {
                         return (
                             <>
-                                <button onClick={() => {localStorage.setItem("logout", true); connection.closeConnection()}} >Log out</button>
-                                <input value={this.state.value} onChange={this.handleValue.bind(this)} />
-                                <button onClick={() => this.sendMessage(connection)}>Send</button>
+								<div className={styles.wrapper}>
+									<img src="/power.svg" alt="power" onClick={() => {localStorage.setItem("logout", true); connection.closeConnection()}} className={styles.power}/>
+									<input value={this.state.value} onChange={this.handleValue.bind(this)} className={styles.input} onKeyDown={(e) => this.sendMessage(connection, e)}/>
+									<img src="/arrow.svg" alt="send" className={styles.arrow} onClick={() => this.sendMessage(connection)}/>
+								</div>
                                 <div className={styles.viewer}>
                                     {(() => this.state.messages.map((a, id) => ({ message: a, id })).sort((a, b) => a.message.finished && !b.message.finished ? 1 : -1).map((message) => <div key={message.id} onClick={() => this.handleCheckbox(message.message, connection)} className={styles.item + (this.state.messages[message.id].finished === true ? " " + styles.checked : "")}>
                                         <p>{message.message.message}</p>
