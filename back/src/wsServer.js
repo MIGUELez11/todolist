@@ -2,7 +2,8 @@ const { verifyJWT } = require("./jwt");
 
 require("dotenv").config();
 const JWT = require("./jwt");
-
+const Express = require("express");
+const serverE = Express();
 const https = require("https");
 const fs = require("fs");
 const key = fs.readFileSync("./certs/key.pem");
@@ -11,8 +12,10 @@ const cert = fs.readFileSync("./certs/cert.pem")
 WebSockets SERVER
 */
 const WebSocket = require("ws");
-const httpsServer = https.createServer({ key, cert });
+const httpsServer = https.createServer({ key, cert }, serverE);
 const port = 8080;
+
+serverE.get("/", (req, res) => res.send("Hola Foris"));
 const server = new WebSocket.Server({ server: httpsServer });
 
 const clients = {};
